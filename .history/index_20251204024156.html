@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>❤️ For You</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+      .click-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 24px;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 20px 40px;
+        border-radius: 10px;
+        z-index: 1000;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.7;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wallpaper"></div>
+    <div class="content">
+      <div class="bg_heart">
+        <div class="message">For My Love ❤️</div>
+        <a href="love.html" class="next-button">Click Me ❤️</a>
+      </div>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+      <source src="assets/blue.mp3" type="audio/mpeg" />
+      Your browser does not support audio
+    </audio>
+
+    <div class="click-message">Click anywhere to play music ✨</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script/main.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const music = document.getElementById("backgroundMusic");
+        const message = document.querySelector(".click-message");
+
+        // Save that music should play on next page
+        music.addEventListener("play", () => {
+          localStorage.setItem("musicShouldPlay", "true");
+          localStorage.setItem("musicTime", music.currentTime);
+          message.style.display = "none";
+        });
+
+        // Start music on first click
+        document.addEventListener("click", function startMusic() {
+          music.play().catch((e) => {
+            console.log("Waiting for user interaction...");
+          });
+          document.removeEventListener("click", startMusic);
+        });
+
+        // Auto-hide message after 5 seconds
+        setTimeout(() => {
+          message.style.opacity = "0";
+          setTimeout(() => {
+            message.style.display = "none";
+          }, 1000);
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>

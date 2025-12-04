@@ -1,0 +1,8 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' data: blob: https:; media-src 'self' data: blob: https:;"
+    Access-Control-Allow-Origin = "*"
+    
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
