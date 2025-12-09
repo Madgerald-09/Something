@@ -25,33 +25,33 @@ function init() {
   if (loaded) return;
   loaded = true;
   
-  // Get screen dimensions
+  // Check screen size for optimizations
   var screenWidth = window.innerWidth;
-  var screenHeight = window.innerHeight;
   var isSmallPhone = screenWidth <= 480;
   var isNormalAndroid = screenWidth <= 600;
   
   var mobile = window.isDevice;
+  var koef = mobile ? (isSmallPhone ? 0.5 : 0.6) : 1;
   var canvas = document.getElementById("heart");
   var ctx = canvas.getContext("2d");
   
-  // Set canvas to full screen
-  canvas.width = screenWidth;
-  canvas.height = screenHeight;
-  canvas.style.width = screenWidth + 'px';
-  canvas.style.height = screenHeight + 'px';
+  var width = canvas.width = koef * innerWidth;
+  var height = canvas.height = koef * innerHeight;
+  
+  // Scale canvas for display
+  canvas.style.width = innerWidth + 'px';
+  canvas.style.height = innerHeight + 'px';
   
   var rand = Math.random;
 
-  // Fill background with black
   ctx.fillStyle = "rgba(0,0,0,1)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, width, height);
 
   function drawText() {
     // Adjust font size based on screen width
     var fontSize;
     if (isSmallPhone) {
-      fontSize = "28px"; // Good for small phones
+      fontSize = "28px"; // Small phones
     } else if (isNormalAndroid) {
       fontSize = "36px"; // Normal Android phones
     } else {
@@ -63,16 +63,23 @@ function init() {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     
-    // Position text at bottom 20% of screen
-    var textY = screenHeight * 0.85;
+    // Adjust text position based on screen height
+    var textY;
+    if (window.innerHeight < 600) {
+      textY = height / 2.2 + 250; // Short screens
+    } else if (window.innerHeight < 700) {
+      textY = height / 2.2 + 300; // Medium screens
+    } else {
+      textY = height / 2.2 + 400; // Tall screens
+    }
     
-    // Draw text with shadow for visibility
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    // Draw text with shadow
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
     ctx.shadowBlur = 10;
     ctx.shadowOffsetX = 2;
     ctx.shadowOffsetY = 2;
     
-    ctx.fillText("I Love You Favour", screenWidth / 2, textY);
+    ctx.fillText("I Love You Favour", width / 2, textY);
     
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
@@ -101,14 +108,12 @@ function init() {
   window.addEventListener("resize", function () {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(function() {
-      screenWidth = window.innerWidth;
-      screenHeight = window.innerHeight;
-      canvas.width = screenWidth;
-      canvas.height = screenHeight;
-      canvas.style.width = screenWidth + 'px';
-      canvas.style.height = screenHeight + 'px';
+      width = canvas.width = koef * innerWidth;
+      height = canvas.height = koef * innerHeight;
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
       ctx.fillStyle = "rgba(0,0,0,1)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, width, height);
       
       if (typeof window.resizeHearts === 'function') {
         window.resizeHearts();
@@ -116,118 +121,72 @@ function init() {
     }, 150);
   });
 
-  // Adjust trace count for performance
+  // Adjust settings based on screen size
   var traceCount;
   if (isSmallPhone) {
-    traceCount = 12; // Balanced for small phones
+    traceCount = 10; // Small phones
   } else if (isNormalAndroid) {
     traceCount = 15; // Normal Android
   } else {
-    traceCount = 20; // Desktop/Tablet
+    traceCount = mobile ? 20 : 50; // Desktop
   }
   
   var pointsOrigin = [];
-  var dr = 0.15; // Good balance between smoothness and performance
+  var dr = mobile ? 0.3 : 0.1;
   
-  // Calculate heart size based on screen width (so it fits perfectly)
-  var heartSize;
-  if (isSmallPhone) {
-    heartSize = screenWidth * 0.3; // 30% of screen width for small phones
-  } else if (isNormalAndroid) {
-    heartSize = screenWidth * 0.4; // 40% for normal Android
-  } else {
-    heartSize = screenWidth * 0.5; // 50% for desktop
-  }
+  // Adjust heart scale based on screen size
+  var heartScale = isSmallPhone ? 0.6 : (isNormalAndroid ? 0.8 : 1);
   
-  // Ensure heart is not too big for very wide screens
-  var maxHeartSize = screenHeight * 0.6;
-  if (heartSize > maxHeartSize) {
-    heartSize = maxHeartSize;
-  }
-  
-  // Create perfectly sized hearts
-  var baseSize = 350; // Original heart size reference
-  var scaleFactor = heartSize / baseSize;
-  
-  // Create 3 concentric hearts for depth
-  for (var i = 0; i < Math.PI * 2; i += dr) {
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 
-      350 * scaleFactor, 
-      25 * scaleFactor, 
-      0, 0));
-  }
-  for (var i = 0; i < Math.PI * 2; i += dr) {
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 
-      280 * scaleFactor, 
-      20 * scaleFactor, 
-      0, 0));
-  }
-  for (var i = 0; i < Math.PI * 2; i += dr) {
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 
-      210 * scaleFactor, 
-      15 * scaleFactor, 
-      0, 0));
-  }
+  for (var i = 0; i < Math.PI * 2; i += dr)
+    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 310 * heartScale, 19 * heartScale, 0, 0));
+  for (var i = 0; i < Math.PI * 2; i += dr)
+    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 250 * heartScale, 15 * heartScale, 0, 0));
+  for (var i = 0; i < Math.PI * 2; i += dr)
+    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 190 * heartScale, 11 * heartScale, 0, 0));
 
   var heartPointsCount = pointsOrigin.length;
   var targetPoints = [];
 
   function pulse(kx, ky) {
     for (var i = 0; i < pointsOrigin.length; i++) {
-      // Center the heart on screen
       targetPoints[i] = [
-        kx * pointsOrigin[i][0] + screenWidth / 2,
-        ky * pointsOrigin[i][1] + screenHeight / 2.2, // Center vertically
+        kx * pointsOrigin[i][0] + width / 2,
+        ky * pointsOrigin[i][1] + height / 2.2,
       ];
     }
   }
 
   var e = [];
-  // Adjust particle count for performance
+  // Adjust particle count based on screen size
   var particleCount;
   if (isSmallPhone) {
-    particleCount = Math.floor(heartPointsCount * 0.6); // 60% for small phones
+    particleCount = Math.floor(heartPointsCount * 0.4); // Fewer for small phones
   } else if (isNormalAndroid) {
-    particleCount = Math.floor(heartPointsCount * 0.8); // 80% for normal Android
+    particleCount = Math.floor(heartPointsCount * 0.6); // Moderate for normal Android
   } else {
-    particleCount = heartPointsCount; // 100% for desktop
+    particleCount = heartPointsCount; // Full for desktop
   }
   
-  // Create particles with better visibility
   for (var i = 0; i < particleCount; i++) {
-    var x = rand() * screenWidth;
-    var y = rand() * screenHeight;
-    
-    // Adjust particle size based on screen
-    var particleSize;
-    if (isSmallPhone) {
-      particleSize = 2.5;
-    } else if (isNormalAndroid) {
-      particleSize = 3;
-    } else {
-      particleSize = 3.5;
-    }
-    
+    var x = rand() * width;
+    var y = rand() * height;
     e[i] = {
       vx: 0,
       vy: 0,
-      R: particleSize,
-      speed: rand() + 4,
+      R: isSmallPhone ? 1 : (isNormalAndroid ? 1.5 : 2),
+      speed: rand() + (isSmallPhone ? 2 : (isNormalAndroid ? 3 : 5)),
       q: ~~(rand() * heartPointsCount),
       D: 2 * (i % 2) - 1,
-      force: 0.2 * rand() + 0.7,
-      // Bright pink colors for visibility
-      f: i % 3 === 0 ? "rgba(255, 64, 129, 0.9)" : 
-         i % 3 === 1 ? "rgba(255, 107, 158, 0.9)" : 
-                       "rgba(255, 150, 197, 0.9)",
+      force: 0.2 * rand() + (isSmallPhone ? 0.5 : (isNormalAndroid ? 0.6 : 0.7)),
+      f: isSmallPhone ? "rgba(255, 64, 129, 0.5)" : "rgba(255, 64, 129, 0.7)",
       trace: Array.from({ length: traceCount }, () => ({ x, y })),
     };
   }
 
-  // Good animation speed
+  // Adjust animation speed based on screen size
   var config = { 
-    traceK: 0.35,
-    timeDelta: 0.4
+    traceK: isSmallPhone ? 0.2 : (isNormalAndroid ? 0.3 : 0.4),
+    timeDelta: isSmallPhone ? 0.3 : (isNormalAndroid ? 0.4 : 0.6)
   };
   var time = 0;
 
@@ -236,9 +195,9 @@ function init() {
     pulse((1 + n) * 0.5, (1 + n) * 0.5);
     time += (Math.sin(time) < 0 ? 9 : n > 0.8 ? 0.2 : 1) * config.timeDelta;
 
-    // Gentle background fade
-    ctx.fillStyle = "rgba(0,0,0,0.08)";
-    ctx.fillRect(0, 0, screenWidth, screenHeight);
+    // Background fade
+    ctx.fillStyle = isSmallPhone ? "rgba(0,0,0,.2)" : "rgba(0,0,0,.1)";
+    ctx.fillRect(0, 0, width, height);
 
     for (var i = e.length; i--; ) {
       var u = e[i];
@@ -247,7 +206,7 @@ function init() {
       var dy = u.trace[0].y - q[1];
       var length = Math.sqrt(dx * dx + dy * dy);
 
-      if (length < 12) {
+      if (length < 10) {
         if (rand() > 0.95) {
           u.q = ~~(rand() * heartPointsCount);
         } else {
@@ -271,36 +230,24 @@ function init() {
         N.y -= config.traceK * (N.y - T.y);
       }
 
-      // Draw all trace particles for better visibility
-      for (var t = 0; t < u.trace.length; t++) {
-        var trace = u.trace[t];
-        // Fade trail effect
-        var alpha = 0.9 * (1 - t / u.trace.length);
-        var size = u.R * (1 - t / (u.trace.length * 1.5));
-        
-        ctx.fillStyle = u.f.replace('0.9', alpha.toString());
-        ctx.fillRect(trace.x, trace.y, size, size);
-      }
+      ctx.fillStyle = u.f;
+      ctx.fillRect(u.trace[0].x, u.trace[0].y, u.R, u.R);
     }
 
     drawText();
     window.requestAnimationFrame(loop, canvas);
   }
 
-  // Expose resize function
+  // Expose functions for external control
   window.resizeHearts = function() {
-    screenWidth = window.innerWidth;
-    screenHeight = window.innerHeight;
-    canvas.width = screenWidth;
-    canvas.height = screenHeight;
-    canvas.style.width = screenWidth + 'px';
-    canvas.style.height = screenHeight + 'px';
+    width = canvas.width = koef * innerWidth;
+    height = canvas.height = koef * innerHeight;
+    canvas.style.width = innerWidth + 'px';
+    canvas.style.height = innerHeight + 'px';
   };
-
-  // Start with initial pulse
-  setTimeout(() => {
-    pulse(1, 1);
-  }, 100);
+  
+  window.pauseHearts = function() {};
+  window.resumeHearts = function() {};
 
   loop();
 }

@@ -25,7 +25,7 @@ function init() {
   if (loaded) return;
   loaded = true;
   
-  // Get screen dimensions
+  // Check screen size for optimizations
   var screenWidth = window.innerWidth;
   var screenHeight = window.innerHeight;
   var isSmallPhone = screenWidth <= 480;
@@ -51,11 +51,11 @@ function init() {
     // Adjust font size based on screen width
     var fontSize;
     if (isSmallPhone) {
-      fontSize = "28px"; // Good for small phones
+      fontSize = "32px"; // Slightly larger for small phones
     } else if (isNormalAndroid) {
-      fontSize = "36px"; // Normal Android phones
+      fontSize = "40px"; // Normal Android phones
     } else {
-      fontSize = "48px"; // Desktop/Tablet
+      fontSize = "52px"; // Desktop/Tablet
     }
     
     ctx.font = `bold ${fontSize} 'Roboto', Arial, sans-serif`;
@@ -63,15 +63,21 @@ function init() {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     
-    // Position text at bottom 20% of screen
-    var textY = screenHeight * 0.85;
+    // Adjust text position - keep it visible
+    var textY = screenHeight * 0.8; // Position text at bottom 20% of screen
     
-    // Draw text with shadow for visibility
+    // Draw text with better shadow for visibility
     ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetX = 3;
+    ctx.shadowOffsetY = 3;
     
+    // Draw text multiple times for better visibility
+    ctx.fillText("I Love You Favour", screenWidth / 2, textY);
+    
+    // Add glow effect
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = 'rgba(255, 64, 129, 0.5)';
     ctx.fillText("I Love You Favour", screenWidth / 2, textY);
     
     ctx.shadowColor = 'transparent';
@@ -101,12 +107,10 @@ function init() {
   window.addEventListener("resize", function () {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(function() {
-      screenWidth = window.innerWidth;
-      screenHeight = window.innerHeight;
-      canvas.width = screenWidth;
-      canvas.height = screenHeight;
-      canvas.style.width = screenWidth + 'px';
-      canvas.style.height = screenHeight + 'px';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
       ctx.fillStyle = "rgba(0,0,0,1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
@@ -116,57 +120,38 @@ function init() {
     }, 150);
   });
 
-  // Adjust trace count for performance
+  // Adjust settings for better visibility
   var traceCount;
   if (isSmallPhone) {
-    traceCount = 12; // Balanced for small phones
+    traceCount = 15; // More traces for visibility
   } else if (isNormalAndroid) {
-    traceCount = 15; // Normal Android
+    traceCount = 20; // Normal Android
   } else {
-    traceCount = 20; // Desktop/Tablet
+    traceCount = 30; // Desktop/Tablet
   }
   
   var pointsOrigin = [];
-  var dr = 0.15; // Good balance between smoothness and performance
+  var dr = 0.1; // More points for smoother heart
   
-  // Calculate heart size based on screen width (so it fits perfectly)
-  var heartSize;
+  // Adjust heart scale for better visibility on all screens
+  var heartScale;
   if (isSmallPhone) {
-    heartSize = screenWidth * 0.3; // 30% of screen width for small phones
+    heartScale = 1.2; // Larger for small screens
   } else if (isNormalAndroid) {
-    heartSize = screenWidth * 0.4; // 40% for normal Android
+    heartScale = 1.5; // Normal Android
   } else {
-    heartSize = screenWidth * 0.5; // 50% for desktop
+    heartScale = 1.8; // Desktop
   }
   
-  // Ensure heart is not too big for very wide screens
-  var maxHeartSize = screenHeight * 0.6;
-  if (heartSize > maxHeartSize) {
-    heartSize = maxHeartSize;
-  }
-  
-  // Create perfectly sized hearts
-  var baseSize = 350; // Original heart size reference
-  var scaleFactor = heartSize / baseSize;
-  
-  // Create 3 concentric hearts for depth
+  // Create larger hearts with more particles
   for (var i = 0; i < Math.PI * 2; i += dr) {
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 
-      350 * scaleFactor, 
-      25 * scaleFactor, 
-      0, 0));
+    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 350 * heartScale, 25 * heartScale, 0, 0));
   }
   for (var i = 0; i < Math.PI * 2; i += dr) {
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 
-      280 * scaleFactor, 
-      20 * scaleFactor, 
-      0, 0));
+    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 280 * heartScale, 20 * heartScale, 0, 0));
   }
   for (var i = 0; i < Math.PI * 2; i += dr) {
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 
-      210 * scaleFactor, 
-      15 * scaleFactor, 
-      0, 0));
+    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210 * heartScale, 15 * heartScale, 0, 0));
   }
 
   var heartPointsCount = pointsOrigin.length;
@@ -174,49 +159,37 @@ function init() {
 
   function pulse(kx, ky) {
     for (var i = 0; i < pointsOrigin.length; i++) {
-      // Center the heart on screen
       targetPoints[i] = [
         kx * pointsOrigin[i][0] + screenWidth / 2,
-        ky * pointsOrigin[i][1] + screenHeight / 2.2, // Center vertically
+        ky * pointsOrigin[i][1] + screenHeight / 2.5, // Position heart higher
       ];
     }
   }
 
   var e = [];
-  // Adjust particle count for performance
+  // More particles for better visibility
   var particleCount;
   if (isSmallPhone) {
-    particleCount = Math.floor(heartPointsCount * 0.6); // 60% for small phones
+    particleCount = Math.floor(heartPointsCount * 0.8); // More for small phones
   } else if (isNormalAndroid) {
-    particleCount = Math.floor(heartPointsCount * 0.8); // 80% for normal Android
+    particleCount = Math.floor(heartPointsCount * 1); // Full count
   } else {
-    particleCount = heartPointsCount; // 100% for desktop
+    particleCount = Math.floor(heartPointsCount * 1.2); // Extra for desktop
   }
   
-  // Create particles with better visibility
+  // Brighter colors and larger particles
   for (var i = 0; i < particleCount; i++) {
     var x = rand() * screenWidth;
     var y = rand() * screenHeight;
-    
-    // Adjust particle size based on screen
-    var particleSize;
-    if (isSmallPhone) {
-      particleSize = 2.5;
-    } else if (isNormalAndroid) {
-      particleSize = 3;
-    } else {
-      particleSize = 3.5;
-    }
-    
     e[i] = {
       vx: 0,
       vy: 0,
-      R: particleSize,
+      R: isSmallPhone ? 2.5 : (isNormalAndroid ? 3 : 3.5), // Larger particles
       speed: rand() + 4,
       q: ~~(rand() * heartPointsCount),
       D: 2 * (i % 2) - 1,
       force: 0.2 * rand() + 0.7,
-      // Bright pink colors for visibility
+      // Brighter colors for better visibility
       f: i % 3 === 0 ? "rgba(255, 64, 129, 0.9)" : 
          i % 3 === 1 ? "rgba(255, 107, 158, 0.9)" : 
                        "rgba(255, 150, 197, 0.9)",
@@ -224,10 +197,10 @@ function init() {
     };
   }
 
-  // Good animation speed
+  // Slower animation for better visibility
   var config = { 
-    traceK: 0.35,
-    timeDelta: 0.4
+    traceK: 0.4, // Slower trace fading
+    timeDelta: 0.3 // Slower overall animation
   };
   var time = 0;
 
@@ -236,8 +209,8 @@ function init() {
     pulse((1 + n) * 0.5, (1 + n) * 0.5);
     time += (Math.sin(time) < 0 ? 9 : n > 0.8 ? 0.2 : 1) * config.timeDelta;
 
-    // Gentle background fade
-    ctx.fillStyle = "rgba(0,0,0,0.08)";
+    // Slower background fade for better visibility
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.fillRect(0, 0, screenWidth, screenHeight);
 
     for (var i = e.length; i--; ) {
@@ -247,7 +220,7 @@ function init() {
       var dy = u.trace[0].y - q[1];
       var length = Math.sqrt(dx * dx + dy * dy);
 
-      if (length < 12) {
+      if (length < 15) { // Larger attraction radius
         if (rand() > 0.95) {
           u.q = ~~(rand() * heartPointsCount);
         } else {
@@ -271,15 +244,13 @@ function init() {
         N.y -= config.traceK * (N.y - T.y);
       }
 
-      // Draw all trace particles for better visibility
+      // Draw each trace particle for better visibility
       for (var t = 0; t < u.trace.length; t++) {
         var trace = u.trace[t];
-        // Fade trail effect
+        // Make trace particles fade out
         var alpha = 0.9 * (1 - t / u.trace.length);
-        var size = u.R * (1 - t / (u.trace.length * 1.5));
-        
         ctx.fillStyle = u.f.replace('0.9', alpha.toString());
-        ctx.fillRect(trace.x, trace.y, size, size);
+        ctx.fillRect(trace.x, trace.y, u.R * (1 - t / u.trace.length), u.R * (1 - t / u.trace.length));
       }
     }
 
@@ -287,14 +258,22 @@ function init() {
     window.requestAnimationFrame(loop, canvas);
   }
 
-  // Expose resize function
+  // Expose functions for external control
   window.resizeHearts = function() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
     screenWidth = window.innerWidth;
     screenHeight = window.innerHeight;
-    canvas.width = screenWidth;
-    canvas.height = screenHeight;
-    canvas.style.width = screenWidth + 'px';
-    canvas.style.height = screenHeight + 'px';
+  };
+  
+  window.pauseHearts = function() {
+    // Optional: Add pause functionality
+  };
+  
+  window.resumeHearts = function() {
+    // Optional: Add resume functionality
   };
 
   // Start with initial pulse
@@ -309,3 +288,20 @@ function init() {
 document.addEventListener("DOMContentLoaded", function() {
   setTimeout(init, 300);
 });
+
+// Also update the love.html to ensure proper background
+if (document.querySelector('style')) {
+  // Add CSS to ensure canvas is on top
+  var style = document.createElement('style');
+  style.textContent = `
+    body { background: #000 !important; }
+    canvas { 
+      position: fixed !important; 
+      top: 0 !important; 
+      left: 0 !important; 
+      z-index: 1 !important;
+    }
+    #clickMessage { z-index: 1000 !important; }
+  `;
+  document.head.appendChild(style);
+}

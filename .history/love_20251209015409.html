@@ -2,38 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=0.5">
   <title>❤️ I Love You Favour</title>
   <link rel="stylesheet" href="styles/love.css">
   <style>
-    /* Base styles */
+    /* Android Optimizations */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 150%; /* Allow 150% zoom */
       touch-action: manipulation;
     }
     
-    html, body {
-      height: 100%;
-      overflow: hidden;
+    html {
+      height: -webkit-fill-available;
     }
     
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Roboto', Arial, sans-serif;
-      background: #000;
-      position: fixed;
+      overflow: hidden;
       width: 100vw;
       height: 100vh;
+      height: -webkit-fill-available;
+      position: fixed;
+      font-family: 'Roboto', 'Segoe UI', -apple-system, sans-serif;
+      background: #000;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     
     canvas {
       display: block;
-      width: 100vw;
-      height: 100vh;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: -webkit-fill-available !important;
       position: absolute;
       top: 0;
       left: 0;
@@ -53,92 +58,119 @@
       z-index: 1000;
       animation: pulse 2s infinite;
       cursor: pointer;
-      box-shadow: 0 15px 40px rgba(255, 64, 129, 0.5);
+      box-shadow: 0 15px 40px rgba(255, 64, 129, 0.5),
+                  0 0 0 2px rgba(255, 255, 255, 0.1);
       display: none;
-      min-width: 260px;
-      max-width: 90%;
+      min-width: 280px;
+      max-width: 85%;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 2px solid rgba(255, 255, 255, 0.2);
       user-select: none;
+      -webkit-user-select: none;
       min-height: 65px;
       display: flex;
       align-items: center;
       justify-content: center;
       line-height: 1.4;
       font-weight: 500;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
     @keyframes pulse {
       0% { 
         transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 15px 40px rgba(255, 64, 129, 0.5);
       }
       50% { 
-        transform: translate(-50%, -50%) scale(1.05);
+        transform: translate(-50%, -50%) scale(1.08);
+        box-shadow: 0 20px 50px rgba(255, 64, 129, 0.7);
       }
       100% { 
         transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 15px 40px rgba(255, 64, 129, 0.5);
       }
     }
     
-    /* 🔴 SINGLE ANDROID BREAKPOINT (most phones) */
-    @media only screen and (max-width: 600px) {
+    /* Android-specific Media Queries */
+    @media screen and (max-width: 768px) {
       #clickMessage {
         font-size: 20px;
-        padding: 20px 35px;
-        min-width: 230px;
-        min-height: 60px;
+        padding: 22px 38px;
+        min-width: 250px;
         border-radius: 22px;
       }
     }
     
-    /* 📱 Small Mobile Phones (0px - 479px) */
-    @media only screen and (max-width: 480px) {
+    @media screen and (max-width: 480px) {
       #clickMessage {
         font-size: 18px;
+        padding: 20px 35px;
+        min-width: 230px;
+        border-radius: 20px;
+        min-height: 60px;
+      }
+    }
+    
+    @media screen and (max-width: 360px) {
+      #clickMessage {
+        font-size: 16px;
         padding: 18px 30px;
         min-width: 210px;
-        min-height: 55px;
-        border-radius: 20px;
-        border-width: 1.5px;
-      }
-    }
-    
-    /* 📱 Very Small Mobile Phones */
-    @media only screen and (max-width: 360px) {
-      #clickMessage {
-        font-size: 16px;
-        padding: 16px 25px;
-        min-width: 190px;
-        min-height: 50px;
         border-radius: 18px;
+        min-height: 55px;
       }
     }
     
-    /* Landscape mode */
-    @media only screen and (max-height: 500px) and (orientation: landscape) {
+    /* 150% zoom support */
+    @media screen and (min-resolution: 150dpi) {
+      #clickMessage {
+        font-size: 22px;
+        padding: 28px 50px;
+      }
+    }
+    
+    /* Landscape mode for Android */
+    @media (orientation: landscape) and (max-height: 500px) {
       #clickMessage {
         font-size: 16px;
-        padding: 14px 25px;
+        padding: 15px 25px;
         min-width: 200px;
-        min-height: 45px;
+        min-height: 50px;
       }
     }
     
-    /* Safe area for notched phones */
+    /* Safe area for notched Android phones */
     @supports (padding: max(0px)) {
       body {
-        padding-top: max(0px, env(safe-area-inset-top));
-        padding-bottom: max(0px, env(safe-area-inset-bottom));
-        padding-left: max(0px, env(safe-area-inset-left));
-        padding-right: max(0px, env(safe-area-inset-right));
+        padding: max(0px, env(safe-area-inset-top)) 
+                 max(0px, env(safe-area-inset-right)) 
+                 max(0px, env(safe-area-inset-bottom)) 
+                 max(0px, env(safe-area-inset-left));
+      }
+      
+      #clickMessage {
+        margin-top: max(10px, env(safe-area-inset-top));
       }
     }
     
-    /* Touch feedback */
+    /* Android performance optimizations */
+    @media (prefers-reduced-motion: reduce) {
+      #clickMessage {
+        animation: none;
+      }
+    }
+    
+    /* Touch feedback for Android */
     #clickMessage:active {
-      transform: translate(-50%, -50%) scale(0.95);
+      transform: translate(-50%, -50%) scale(0.96);
       transition: transform 0.1s;
+    }
+    
+    /* Prevent overscroll on Android */
+    body {
+      overscroll-behavior-y: none;
+      -webkit-overflow-scrolling: touch;
     }
   </style>
 </head>
@@ -158,13 +190,29 @@
     document.addEventListener('DOMContentLoaded', function() {
       const music = document.getElementById('backgroundMusic');
       const message = document.getElementById('clickMessage');
+      const canvas = document.getElementById('heart');
       
-      // Check screen size
-      const isSmallPhone = window.innerWidth <= 480;
+      // Android detection
       const isAndroid = /android/i.test(navigator.userAgent);
       
-      // Adjust volume
-      music.volume = isSmallPhone ? 0.9 : 0.85;
+      // Set volume for Android
+      music.volume = isAndroid ? 0.85 : 0.8;
+      
+      // Handle Android orientation changes
+      function handleResize() {
+        if (canvas) {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          if (typeof window.resizeHearts === 'function') {
+            setTimeout(window.resizeHearts, 100);
+          }
+        }
+      }
+      
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('orientationchange', function() {
+        setTimeout(handleResize, 300);
+      });
       
       // Check if music was playing on previous page
       const shouldPlay = localStorage.getItem('musicShouldPlay') === 'true';
@@ -174,7 +222,7 @@
         music.currentTime = parseFloat(savedTime);
       }
       
-      // Setup audio events
+      // Android-optimized audio handling
       function setupAudio() {
         music.addEventListener('play', () => {
           localStorage.setItem('musicShouldPlay', 'true');
@@ -185,50 +233,56 @@
           localStorage.setItem('musicShouldPlay', 'false');
         });
         
-        // Save current time
+        // Save current time with Android optimization
         const saveInterval = setInterval(() => {
           if (!music.paused) {
             localStorage.setItem('musicTime', music.currentTime);
           }
-        }, 2000);
+        }, isAndroid ? 2000 : 3000);
         
-        // Handle page visibility
+        // Handle Android app background/foreground
         document.addEventListener('visibilitychange', () => {
-          if (document.hidden) {
+          if (document.hidden && !music.paused) {
             music.pause();
+          } else if (!document.hidden && shouldPlay) {
+            setTimeout(() => music.play().catch(e => console.log(e)), 300);
           }
         });
         
+        // Cleanup
         window.addEventListener('beforeunload', () => {
           clearInterval(saveInterval);
         });
       }
       
-      // Try to auto-play
+      // Try to auto-play with Android considerations
       setTimeout(() => {
         if (shouldPlay) {
           music.play().then(() => {
             message.style.display = 'none';
             setupAudio();
           }).catch(error => {
+            console.log('Autoplay blocked');
             showPlayButton();
           });
         } else {
           showPlayButton();
         }
-      }, 500);
+      }, isAndroid ? 800 : 500);
       
       function showPlayButton() {
         message.style.display = 'flex';
+        message.textContent = '✨ Tap to Play Music ✨';
         
-        // Play on tap
+        // Touch/click handler for Android
         const playHandler = function() {
           music.play().then(() => {
             message.style.display = 'none';
             localStorage.setItem('musicShouldPlay', 'true');
             setupAudio();
           }).catch(e => {
-            message.textContent = '❌ Tap again';
+            console.log('Play failed:', e);
+            message.textContent = '❌ Tap again to play';
             setTimeout(() => {
               message.textContent = '✨ Tap to Play Music ✨';
             }, 1000);
@@ -236,8 +290,9 @@
         };
         
         message.addEventListener('click', playHandler);
+        message.addEventListener('touchstart', playHandler);
         
-        // Also play on any tap
+        // Also play on any tap (Android-friendly)
         document.addEventListener('click', function anyClick(e) {
           if (e.target !== message && music.paused) {
             music.play();
@@ -248,7 +303,7 @@
         }, { once: true });
       }
       
-      // Double-tap to pause/play on Android
+      // Android double-tap to pause/play
       if (isAndroid) {
         let lastTap = 0;
         document.addEventListener('touchend', function(e) {
@@ -267,10 +322,18 @@
         });
       }
       
-      // Prevent context menu
+      // Prevent context menu on Android long press
       document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
       });
+      
+      // Handle Android back button
+      if (isAndroid) {
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+          history.go(1);
+        };
+      }
     });
   </script>
 </body>

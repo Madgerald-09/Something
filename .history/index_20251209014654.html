@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>❤️ I Love You Mitchelle</title>
+  <link rel="stylesheet" href="styles/love.css">
+  <style>
+    /* Reset and base styles for Android */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    
+    html {
+      height: -webkit-fill-available; /* Fix for Android Chrome */
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      height: -webkit-fill-available; /* Fill available height on Android */
+      position: fixed;
+      font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      touch-action: manipulation;
+      background: #000;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    canvas {
+      display: block;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: -webkit-fill-available !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      touch-action: none; /* Prevent default touch behaviors */
+    }
+    
+    #clickMessage {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255, 64, 129, 0.95), rgba(156, 39, 176, 0.95));
+      padding: 20px 30px;
+      border-radius: 25px;
+      z-index: 1000;
+      animation: pulse 2s infinite;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 64, 129, 0.5),
+                  0 0 0 1px rgba(255, 255, 255, 0.1);
+      display: none;
+      min-width: 280px;
+      max-width: 90%;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.4;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      will-change: transform; /* Performance optimization */
+    }
+    
+    @keyframes pulse {
+      0% { 
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 10px 30px rgba(255, 64, 129, 0.5);
+      }
+      50% { 
+        transform: translate(-50%, -50%) scale(1.08);
+        box-shadow: 0 15px 40px rgba(255, 64, 129, 0.8);
+      }
+      100% { 
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 10px 30px rgba(255, 64, 129, 0.5);
+      }
+    }
+    
+    /* Android-Specific Media Queries */
+    
+    /* Common Android phone sizes (Samsung Galaxy, Google Pixel, etc.) */
+    @media screen and (max-width: 420px) {
+      #clickMessage {
+        font-size: 16px;
+        padding: 18px 25px;
+        min-width: 240px;
+        border-radius: 22px;
+        min-height: 56px;
+      }
+    }
+    
+    /* Small Android phones (under 5") */
+    @media screen and (max-width: 360px) {
+      #clickMessage {
+        font-size: 15px;
+        padding: 16px 22px;
+        min-width: 220px;
+        border-radius: 20px;
+        min-height: 52px;
+        border-width: 1.5px;
+      }
+      
+      @keyframes pulse {
+        0% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.05); }
+        100% { transform: translate(-50%, -50%) scale(1); }
+      }
+    }
+    
+    /* Extra small Android phones */
+    @media screen and (max-width: 320px) {
+      #clickMessage {
+        font-size: 14px;
+        padding: 14px 20px;
+        min-width: 200px;
+        border-radius: 18px;
+        min-height: 48px;
+      }
+    }
+    
+    /* Tablets and larger phones */
+    @media screen and (min-width: 421px) and (max-width: 768px) {
+      #clickMessage {
+        font-size: 18px;
+        padding: 20px 35px;
+        min-width: 260px;
+        border-radius: 25px;
+      }
+    }
+    
+    /* Android Landscape Mode */
+    @media (orientation: landscape) {
+      #clickMessage {
+        max-width: 70%;
+        min-width: 200px;
+        padding: 15px 25px;
+      }
+    }
+    
+    @media (orientation: landscape) and (max-height: 420px) {
+      #clickMessage {
+        font-size: 14px;
+        padding: 12px 20px;
+        min-height: 45px;
+        border-radius: 18px;
+        min-width: 180px;
+      }
+    }
+    
+    /* Samsung Galaxy Fold / Duo specific */
+    @media screen and (max-width: 280px) {
+      #clickMessage {
+        font-size: 13px;
+        padding: 12px 18px;
+        min-width: 180px;
+        border-radius: 16px;
+        min-height: 44px;
+      }
+    }
+    
+    /* High-end Android phones with high DPI */
+    @media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 350dpi) {
+      #clickMessage {
+        border-width: 1px;
+        box-shadow: 0 8px 25px rgba(255, 64, 129, 0.4),
+                    0 0 0 0.5px rgba(255, 255, 255, 0.2);
+      }
+    }
+    
+    /* Low-end Android performance optimizations */
+    @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+      #clickMessage {
+        animation: none;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    
+    /* Safe area insets for Android notch support */
+    @supports (padding: max(0px)) {
+      body {
+        padding-top: max(0px, env(safe-area-inset-top));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+      }
+      
+      #clickMessage {
+        margin-top: max(10px, env(safe-area-inset-top));
+        margin-bottom: max(10px, env(safe-area-inset-bottom));
+      }
+    }
+    
+    /* Android-specific overscroll prevention */
+    body {
+      overscroll-behavior-y: none;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Remove pull-to-refresh on Chrome for Android */
+    body {
+      overscroll-behavior: contain;
+    }
+    
+    /* Loading animation optimized for Android */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    body {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    /* Enhanced touch feedback for Android */
+    #clickMessage:active {
+      transform: translate(-50%, -50%) scale(0.95);
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(135deg, rgba(255, 64, 129, 1), rgba(156, 39, 176, 1));
+    }
+    
+    /* Ripple effect for Android Material Design */
+    #clickMessage {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #clickMessage::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    #clickMessage:active::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    /* Prevent text selection on Android */
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    
+    /* Fix for Android keyboard appearance */
+    @media screen and (max-width: 768px) {
+      canvas {
+        position: fixed;
+      }
+    }
+    
+    /* Battery optimization for low-end Android */
+    @media (max-width: 768px) {
+      .no-animation {
+        animation: none !important;
+      }
+    }
+    
+    /* Android Chrome address bar hide/show handling */
+    @media screen and (max-height: 700px) {
+      #clickMessage {
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="heart"></canvas>
+  
+  <audio id="backgroundMusic" loop preload="auto">
+    <source src="assets/blue.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  
+  <div id="clickMessage">✨ Tap to Play Music ✨</div>
+  
+  <script src="script/love.js"></script>
+  
+  <script>
+    // Android-specific optimizations
+    document.addEventListener('DOMContentLoaded', function() {
+      const music = document.getElementById('backgroundMusic');
+      const message = document.getElementById('clickMessage');
+      const canvas = document.getElementById('heart');
+      
+      // Detect Android browser
+      const isAndroid = /android/i.test(navigator.userAgent);
+      const isChrome = /chrome/i.test(navigator.userAgent);
+      
+      // Android-specific volume settings
+      music.volume = isAndroid ? 0.9 : 0.8; // Slightly louder for Android
+      
+      // Function to adjust canvas for Android screens
+      function resizeCanvas() {
+        if (canvas) {
+          // Get actual viewport dimensions (accounting for address bar)
+          const vh = window.innerHeight * 0.01;
+          const vw = window.innerWidth * 0.01;
+          
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          
+          // Set CSS custom properties for responsive units
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+          document.documentElement.style.setProperty('--vw', `${vw}px`);
+          
+          // Force canvas redraw if function exists
+          if (typeof window.resizeHearts === 'function') {
+            window.resizeHearts();
+          }
+        }
+      }
+      
+      // Initial resize with delay for Android
+      setTimeout(resizeCanvas, 100);
+      
+      // Enhanced resize handling for Android
+      let resizeTimeout;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(resizeCanvas, 250); // Debounce for performance
+      });
+      
+      // Better orientation change handling for Android
+      window.addEventListener('orientationchange', function() {
+        // Hide message during orientation change
+        message.style.opacity = '0';
+        message.style.transition = 'opacity 0.2s';
+        
+        setTimeout(() => {
+          resizeCanvas();
+          // Show message after resize
+          setTimeout(() => {
+            message.style.opacity = '1';
+          }, 100);
+        }, 150);
+      });
+      
+      // Handle Android back button
+      if (isAndroid) {
+        window.addEventListener('popstate', function(e) {
+          // Prevent accidental page back on Android
+          if (window.history.length <= 1) {
+            e.preventDefault();
+            return false;
+          }
+        });
+      }
+      
+      // Check if music was playing on previous page
+      const shouldPlay = localStorage.getItem('musicShouldPlay') === 'true';
+      const savedTime = localStorage.getItem('musicTime') || 0;
+      
+      if (shouldPlay && savedTime > 0) {
+        music.currentTime = parseFloat(savedTime);
+      }
+      
+      // Android-optimized audio handling
+      function setupAudio() {
+        // Save playback state
+        const savePlayState = () => {
+          localStorage.setItem('musicShouldPlay', String(!music.paused));
+          if (!music.paused) {
+            message.style.display = 'none';
+            if (typeof window.resumeHearts === 'function') {
+              window.resumeHearts();
+            }
+          } else {
+            if (typeof window.pauseHearts === 'function') {
+              window.pauseHearts();
+            }
+          }
+        };
+        
+        music.addEventListener('play', savePlayState);
+        music.addEventListener('pause', savePlayState);
+        
+        // Save current time periodically with Android optimization
+        let lastSaveTime = 0;
+        const saveTimeInterval = setInterval(() => {
+          if (!music.paused) {
+            const currentTime = Date.now();
+            // Only save every 2 seconds to reduce localStorage writes
+            if (currentTime - lastSaveTime > 2000) {
+              localStorage.setItem('musicTime', music.currentTime);
+              lastSaveTime = currentTime;
+            }
+          }
+        }, 1000);
+        
+        // Handle page visibility changes (important for Android)
+        let wasPlaying = false;
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            // Page is hidden (app switched or screen locked)
+            wasPlaying = !music.paused;
+            if (wasPlaying) {
+              music.pause();
+            }
+          } else if (wasPlaying) {
+            // Page is visible again, resume if it was playing
+            setTimeout(() => {
+              music.play().catch(e => console.log('Resume failed:', e));
+              wasPlaying = false;
+            }, 300);
+          }
+        });
+        
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+          clearInterval(saveTimeInterval);
+          localStorage.setItem('musicTime', music.currentTime);
+        });
+      }
+      
+      // Android-specific auto-play strategy
+      function androidAutoPlayStrategy() {
+        // Show play button immediately for Android
+        message.style.display = 'flex';
+        message.textContent = '✨ Tap to Play Music ✨';
+        
+        // Add vibration feedback for Android (if supported)
+        const vibrate = () => {
+          if (navigator.vibrate && isAndroid) {
+            navigator.vibrate(50);
+          }
+        };
+        
+        // Play when message is tapped with vibration
+        message.addEventListener('click', function playMusic() {
+          vibrate();
+          music.play().then(() => {
+            message.style.display = 'none';
+            localStorage.setItem('musicShouldPlay', 'true');
+            setupAudio();
+          }).catch(e => {
+            console.log('Play failed:', e);
+            vibrate(); // Error vibration
+            message.textContent = '❌ Tap again to play music';
+            message.style.background = 'linear-gradient(135deg, rgba(244, 67, 54, 0.95), rgba(211, 47, 47, 0.95))';
+            setTimeout(() => {
+              message.style.background = 'linear-gradient(135deg, rgba(255, 64, 129, 0.95), rgba(156, 39, 176, 0.95))';
+              message.textContent = '✨ Tap to Play Music ✨';
+            }, 1000);
+          });
+        });
+        
+        // Also play on any tap (Android-friendly)
+        document.addEventListener('click', function playOnAnyClick(e) {
+          if (e.target !== message && music.paused) {
+            music.play();
+            message.style.display = 'none';
+            localStorage.setItem('musicShouldPlay', 'true');
+            setupAudio();
+          }
+        }, { once: true });
+        
+        // Android double-tap to pause/play
+        let lastTap = 0;
+        document.addEventListener('touchend', function(e) {
+          const currentTime = new Date().getTime();
+          const tapLength = currentTime - lastTap;
+          
+          if (tapLength < 600 && tapLength > 0) {
+            // Double tap detected
+            e.preventDefault();
+            vibrate();
+            if (music.paused) {
+              music.play();
+              message.style.display = 'none';
+            } else {
+              music.pause();
+              message.textContent = '⏸️ Music Paused - Tap to Resume';
+              message.style.display = 'flex';
+            }
+          }
+          lastTap = currentTime;
+        });
+        
+        // Android long-press support
+        let pressTimer;
+        message.addEventListener('touchstart', function(e) {
+          pressTimer = setTimeout(() => {
+            message.textContent = '🎵 Loading...';
+          }, 1000);
+        });
+        
+        message.addEventListener('touchend', function(e) {
+          clearTimeout(pressTimer);
+        });
+      }
+      
+      // Try to auto-play with Android-specific delays
+      setTimeout(() => {
+        if (shouldPlay && isAndroid) {
+          // Android-specific resume with user gesture requirement
+          const tryResume = () => {
+            music.play().then(() => {
+              console.log('🎵 Music resumed on Android');
+              message.style.display = 'none';
+              setupAudio();
+            }).catch(error => {
+              console.log('🔇 Android autoplay blocked');
+              androidAutoPlayStrategy();
+            });
+          };
+          
+          // Add a small delay for Android
+          setTimeout(tryResume, 300);
+        } else {
+          androidAutoPlayStrategy();
+        }
+      }, isAndroid ? 800 : 500); // Longer delay for Android
+      
+      // Prevent context menu on Android long press
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      // Android keyboard avoidance
+      window.addEventListener('focusin', function() {
+        // If an input gets focus (shouldn't happen), blur it
+        if (document.activeElement.tagName === 'INPUT') {
+          document.activeElement.blur();
+        }
+      });
+      
+      // Android performance monitoring
+      if (isAndroid) {
+        // Reduce animation intensity if device might be struggling
+        setTimeout(() => {
+          const fps = 60; // Placeholder for FPS check
+          if (fps < 30) {
+            document.body.classList.add('no-animation');
+          }
+        }, 2000);
+      }
+    });
+    
+    // Fix for Android Chrome 100vh issue
+    function setVH() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    window.addEventListener('resize', setVH);
+    setVH();
+  </script>
+</body>
+</html>
